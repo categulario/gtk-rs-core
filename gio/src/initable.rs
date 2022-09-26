@@ -19,7 +19,7 @@ impl Initable {
         properties: &[(&str, &dyn ToValue)],
         cancellable: Option<&P>,
     ) -> Result<O, InitableError> {
-        let object = Object::new::<O>(properties)?;
+        let object = Object::try_new::<O>(properties)?;
         unsafe { object.init(cancellable)? };
         Ok(object)
     }

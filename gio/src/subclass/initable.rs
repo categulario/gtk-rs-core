@@ -153,7 +153,7 @@ mod tests {
             // This creates an uninitialized InitableTestType object, for testing
             // purposes. In real code, using Initable::new (like the new() method
             // does) is recommended.
-            glib::Object::new(&[]).expect("Failed creation of InitableTestType object")
+            glib::Object::new(&[])
         }
 
         pub fn value(&self) -> u64 {

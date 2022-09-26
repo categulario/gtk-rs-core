@@ -446,7 +446,7 @@ mod test {
 
     #[test]
     fn test_create_child_object() {
-        let obj: ChildObject = Object::new(&[]).expect("Object::new failed");
+        let obj: ChildObject = Object::new(&[]);
 
         assert_eq!(obj, obj.imp().instance());
     }

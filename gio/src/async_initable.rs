@@ -24,7 +24,7 @@ impl AsyncInitable {
         cancellable: Option<&P>,
         callback: Q,
     ) {
-        let obj = match Object::new::<O>(properties) {
+        let obj = match Object::try_new::<O>(properties) {
             Ok(obj) => obj,
             Err(e) => return callback(Err(e.into())),
         };
@@ -44,7 +44,7 @@ impl AsyncInitable {
         properties: &[(&str, &dyn ToValue)],
         io_priority: glib::Priority,
     ) -> Pin<Box_<dyn std::future::Future<Output = Result<O, InitableError>> + 'static>> {
-        let obj = match Object::new::<O>(properties) {
+        let obj = match Object::try_new::<O>(properties) {
             Ok(obj) => obj,
             Err(e) => return Box::pin(future::ready(Err(e.into()))),
         };

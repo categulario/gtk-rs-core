@@ -1342,13 +1342,25 @@ impl Object {
     ///
     /// This fails if the object is not instantiable, doesn't have all the given properties or
     /// property values of the wrong type are provided.
-    #[allow(clippy::new_ret_no_self)]
-    pub fn new<T: IsA<Object> + IsClass>(
+    pub fn try_new<T: IsA<Object> + IsClass>(
         properties: &[(&str, &dyn ToValue)],
     ) -> Result<T, BoolError> {
         Ok(Object::with_type(T::static_type(), properties)?
             .downcast()
             .unwrap())
+    }
+
+    // rustdoc-stripper-ignore-next
+    /// Create a new instance of an object with the given properties.
+    ///
+    /// # Panics
+    ///
+    /// This panics if the object is not instantiable, doesn't have all the given properties or
+    /// property values of the wrong type are provided.
+    pub fn new<T: IsA<Object> + IsClass>(
+        properties: &[(&str, &dyn ToValue)],
+    ) -> T {
+        Self::try_new(properties).unwrap()
     }
 
     // rustdoc-stripper-ignore-next
@@ -4589,13 +4601,13 @@ mod tests {
 
     #[test]
     fn new() {
-        let obj: Object = Object::new(&[]).unwrap();
+        let obj: Object = Object::new(&[]);
         drop(obj);
     }
 
     #[test]
     fn data() {
-        let obj: Object = Object::new(&[]).unwrap();
+        let obj: Object = Object::new(&[]);
         unsafe {
             obj.set_data::<String>("foo", "hello".into());
             let data = obj.data::<String>("foo").unwrap();
@@ -4607,7 +4619,7 @@ mod tests {
 
     #[test]
     fn weak_ref() {
-        let obj: Object = Object::new(&[]).unwrap();
+        let obj: Object = Object::new(&[]);
 
         let weakref: WeakRef<Object> = WeakRef::new();
         weakref.set(Some(&obj));
@@ -4625,7 +4637,7 @@ mod tests {
 
     #[test]
     fn weak_ref_notify() {
-        let obj: Object = Object::new(&[]).unwrap();
+        let obj: Object = Object::new(&[]);
 
         let handle = obj.add_weak_ref_notify(|| {
             unreachable!();
@@ -4643,7 +4655,7 @@ mod tests {
         assert!(called.load(Ordering::SeqCst));
         handle.disconnect();
 
-        let obj: Object = Object::new(&[]).unwrap();
+        let obj: Object = Object::new(&[]);
 
         let called = Arc::new(AtomicBool::new(false));
         let called_weak = Arc::downgrade(&called);
@@ -4654,7 +4666,7 @@ mod tests {
         drop(obj);
         assert!(called.load(Ordering::SeqCst));
 
-        let obj: Object = Object::new(&[]).unwrap();
+        let obj: Object = Object::new(&[]);
 
         let called = Rc::new(Cell::new(false));
         let called_weak = Rc::downgrade(&called);
@@ -4668,7 +4680,7 @@ mod tests {
 
     #[test]
     fn test_value() {
-        let obj1: Object = Object::new(&[]).unwrap();
+        let obj1: Object = Object::new(&[]);
         let v = obj1.to_value();
         let obj2 = v.get::<&Object>().unwrap();
 

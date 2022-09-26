@@ -258,7 +258,7 @@ mod tests {
             // This creates an uninitialized AsyncInitableTestType object, for testing
             // purposes. In real code, using AsyncInitable::new_future (like the new() method
             // does) is recommended.
-            glib::Object::new(&[]).expect("Failed creation of AsyncInitableTestType object")
+            glib::Object::new(&[])
         }
 
         pub fn value(&self) -> u64 {
